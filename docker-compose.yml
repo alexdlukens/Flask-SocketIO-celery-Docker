@@ -1,35 +1,48 @@
-version: '2'
-
+version: "3.9"
 services:
+
   redis:
-    image: 'redis:3.0-alpine'
+    image: "redis:7"
     command: redis-server --requirepass devpassword
-    volumes:
-      - 'redis:/var/lib/redis/data'
+    networks:
+      - shared_net
     ports:
       - '6379:6379'
+    volumes:
+      - 'redis:/var/lib/redis/data'
 
-  website:
-    build: .
+  flask:
+    build: ./flask_app
     command: >
       gunicorn --worker-class eventlet -w 1 -b 0.0.0.0:5000
         --access-logfile -
         --reload
-        "example.app:create_app()"
-    env_file:
-      - '.env'
-    volumes:
-      - '.:/app'
+        "src.app:create_app()"
     ports:
-      - '5000:5000'
-
-  celery:
-    build: .
-    command: celery worker -l info -A example.blueprints.bptest2.tasks
+      - "5000:5000"
+    networks:
+      - shared_net
     env_file:
-      - '.env'
+      - './flask_app/.env'
     volumes:
-      - '.:/app'
+      - './flask_app:/app'
+    depends_on:
+      - redis
+    
+  celery-worker:
+    build: ./flask_app
+    command: celery -A src.blueprints.bptest2.tasks worker -l info 
+    env_file:
+      - './flask_app/.env'
+    volumes:
+      - './flask_app:/app'
+    networks:
+      - shared_net
+    depends_on:
+      - redis
+      - flask
 
+networks:
+  shared_net:
 volumes:
   redis:
