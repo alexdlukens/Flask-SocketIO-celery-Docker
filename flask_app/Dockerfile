@@ -1,7 +1,7 @@
-FROM python:3.6-slim
+FROM python:3.9-slim
 
 RUN apt-get update && apt-get install -qq -y \
-  build-essential libpq-dev --no-install-recommends
+  build-essential libpq-dev git --no-install-recommends
 
 RUN mkdir /app
 WORKDIR /app
