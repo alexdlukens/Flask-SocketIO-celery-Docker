@@ -27,7 +27,7 @@ def create_celery_app(app=None):
     :param app: Flask app
     :return: Celery app
     """
-    app = app or create_app()
+    app = app or create_app(main=False)
 
     celery = Celery(app.import_name, broker='redis://:devpassword@redis:6379/0',
                     include=CELERY_TASK_LIST)
@@ -61,17 +61,15 @@ def create_app(main=True, debug=False):
     #socketio = SocketIO()
     #   socketio = SocketIO(None, logger=True, engineio_logger=True, message_queue=app.config['CELERY_BROKER_URL'], async_mode='threading')
     # # Initialize Celery
-
-    from src.blueprints.bptest2 import bptest2
-    app.register_blueprint(bptest2)
-
     from src.blueprints.bptest1 import bptest1
-    app.register_blueprint(bptest1)
+    from src.blueprints.bptest2 import bptest2
 
     #socketio.init_app(app, logger=True, engineio_logger=True, async_mode=async_mode, message_queue='redis://:devpassword@redis:6379/0')
 
     #######PUT THIS AFTER REGISTERING THE BLUEPRINT
     if main:
+        app.register_blueprint(bptest2)
+        app.register_blueprint(bptest1)
         # Initialize socketio server and attach it to the message queue, so
         # that everything works even when there are multiple servers or
         # additional processes such as Celery workers wanting to access
