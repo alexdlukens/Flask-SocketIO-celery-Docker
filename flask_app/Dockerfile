@@ -11,6 +11,4 @@ RUN pip install -r requirements.txt
 
 COPY . .
 
-LABEL maintainer="Mitalee Mulpuru <raomitalee@gmail.com>"
-
 CMD gunicorn --worker-class eventlet -w 1 -b 0.0.0.0:5000 --log-level=debug --access-logfile - "src.app:create_app()"

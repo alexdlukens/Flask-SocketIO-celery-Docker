@@ -7,15 +7,15 @@ from flask_socketio import SocketIO, emit, join_room, leave_room, \
 
 from celery import Celery
 
-#from example.blueprints.bptest2 import bptest2
-#from example.blueprints.bptest2 import tasks
+#from src.blueprints.bptest2 import bptest2
+#from src.blueprints.bptest2 import tasks
 
 socketio = SocketIO()
 
 
 CELERY_TASK_LIST = [
-    'example.blueprints.bptest1.tasks',
-    'example.blueprints.bptest2.tasks',
+    'src.blueprints.bptest1.tasks',
+    'src.blueprints.bptest2.tasks',
 ]
 
 
@@ -62,10 +62,10 @@ def create_app(main=True, debug=False):
     #   socketio = SocketIO(None, logger=True, engineio_logger=True, message_queue=app.config['CELERY_BROKER_URL'], async_mode='threading')
     # # Initialize Celery
 
-    from example.blueprints.bptest2 import bptest2
+    from src.blueprints.bptest2 import bptest2
     app.register_blueprint(bptest2)
 
-    from example.blueprints.bptest1 import bptest1
+    from src.blueprints.bptest1 import bptest1
     app.register_blueprint(bptest1)
 
     #socketio.init_app(app, logger=True, engineio_logger=True, async_mode=async_mode, message_queue='redis://:devpassword@redis:6379/0')

@@ -1,6 +1,6 @@
 from flask import Blueprint
 
-from example.app import socketio
+from src.app import socketio
 
 from flask_socketio import emit, join_room, leave_room, \
     close_room, rooms, disconnect
@@ -9,7 +9,7 @@ bptest2 = Blueprint('bptest2', __name__)
 
 @bptest2.route('/SendTallyFunc2/', methods=['GET','POST'])
 def send_room_message_without_socketio():
-        from example.blueprints.bptest2.tasks import test_tally_celery
+        from src.blueprints.bptest2.tasks import test_tally_celery
         task = test_tally_celery.delay()
         print ('SENDING TO CELERY. Please wait..')
         return('Processing from BPTEST2.. please wait..')

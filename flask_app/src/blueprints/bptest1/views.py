@@ -1,6 +1,6 @@
 
 from . import bptest1
-from example.app import create_celery_app, socketio
+from src.app import create_celery_app, socketio
 
 celery = create_celery_app()
 
