@@ -76,8 +76,13 @@
             $("#response2").text('Please wait...');
 
             $.ajax({
-            type: 'GET',
+            type: 'POST',
             url: '/SendTallyFunc2/',
+            data: JSON.stringify({'name': 'blah',
+                                  'domain': 'who.com',
+                                  'secure': false,
+                                  'api_key': 'secret'}),
+            contentType: "application/json; charset=utf-8",
 
             success: function(response){
                 //alert(response);

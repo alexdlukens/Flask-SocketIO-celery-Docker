@@ -17,7 +17,7 @@ CELERY_TASK_LIST = [
     'src.blueprints.bptest1.tasks',
     'src.blueprints.bptest2.tasks',
 ]
-
+CELERY_BACKEND_URL = 'redis://:devpassword@redis:6379/0'
 
 def create_celery_app(app=None):
     """
@@ -29,7 +29,8 @@ def create_celery_app(app=None):
     """
     app = app or create_app(main=False)
 
-    celery = Celery(app.import_name, broker='redis://:devpassword@redis:6379/0',
+    celery = Celery(app.import_name, broker=CELERY_BACKEND_URL,
+                    backend=CELERY_BACKEND_URL,
                     include=CELERY_TASK_LIST)
     celery.conf.update(app.config)
     TaskBase = celery.Task
@@ -62,13 +63,13 @@ def create_app(main=True, debug=False):
     #   socketio = SocketIO(None, logger=True, engineio_logger=True, message_queue=app.config['CELERY_BROKER_URL'], async_mode='threading')
     # # Initialize Celery
     from src.blueprints.bptest1 import bptest1
-    from src.blueprints.bptest2 import bptest2
+    from src.blueprints.agent_tasks import agent_tasks
 
     #socketio.init_app(app, logger=True, engineio_logger=True, async_mode=async_mode, message_queue='redis://:devpassword@redis:6379/0')
 
     #######PUT THIS AFTER REGISTERING THE BLUEPRINT
     if main:
-        app.register_blueprint(bptest2)
+        app.register_blueprint(agent_tasks)
         app.register_blueprint(bptest1)
         # Initialize socketio server and attach it to the message queue, so
         # that everything works even when there are multiple servers or
@@ -79,8 +80,6 @@ def create_app(main=True, debug=False):
         #socketio = SocketIO(app, logger=True, engineio_logger=True, message_queue=app.config['CELERY_BROKER_URL'])
     else:
         # Initialize socketio to emit events through through the message queue
-        # Note that since Celery does not use eventlet, we have to be explicit
-        # in setting the async mode to not use it.
         socketio.init_app(None, logger=True, engineio_logger=True, 
                           message_queue='redis://:devpassword@redis:6379/0',
                           async_mode='threading')
