@@ -31,7 +31,7 @@ services:
     
   celery-worker:
     build: ./flask_app
-    command: celery -A src.blueprints.bptest2.tasks worker -l info 
+    command: celery -A src.blueprints.bptest2.tasks worker -P eventlet -c 100  -l info 
     env_file:
       - './flask_app/.env'
     volumes:
